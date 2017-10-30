@@ -33,6 +33,8 @@
 #include <locale.h>
 #endif
 
+#include <spawn.h>
+
 /* ------------------------------------------------------------------------ */
 
 #define LJLIB_MODULE_os
@@ -49,7 +51,11 @@ LJLIB_CF(os_execute)
 #endif
 #else
   const char *cmd = luaL_optstring(L, 1, NULL);
-  int stat = system(cmd);
+  // int stat = system(cmd);
+  pid_t child_pid;
+  int wait_val;
+  int stat = posix_spawn(&child_pid, cmd, NULL, NULL, NULL, NULL);
+  wait(&wait_val);
 #if LJ_52
   if (cmd)
     return luaL_execresult(L, stat);
